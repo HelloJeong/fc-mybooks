@@ -10,3 +10,10 @@ npx create-react-app my-books --template typescript
 
 - react-error-boundary
   - 에러가 발생하면 error page로 보내줌
+
+## login / logout
+
+```bash
+npm i redux react-redux redux-saga redux-devtools-extension redux-actions
+npm i @types/react-redux @types/redux-actions -D
+```
