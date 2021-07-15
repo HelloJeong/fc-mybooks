@@ -1,7 +1,14 @@
-import { put, takeLatest, select, call } from "@redux-saga/core/effects";
-import { BooksState, BookType } from "./../../types";
-import { createActions, handleActions } from "redux-actions";
+import {
+  put,
+  takeLatest,
+  select,
+  call,
+  takeEvery,
+} from "@redux-saga/core/effects";
+import { BookReqType, BooksState, BookType } from "./../../types";
+import { createActions, handleActions, Action } from "redux-actions";
 import BookService from "../../services/BookService";
+import { push } from "connected-react-router";
 
 const initialState: BooksState = {
   books: null,
@@ -40,7 +47,9 @@ export default reducer;
 
 // saga
 
-export const { getBooks } = createActions("GET_BOOKS", { prefix });
+export const { getBooks, addBook } = createActions("GET_BOOKS", "ADD_BOOK", {
+  prefix,
+});
 
 function* getBooksSaga() {
   try {
@@ -53,6 +62,24 @@ function* getBooksSaga() {
   }
 }
 
+function* addBookSaga(action: Action<BookReqType>) {
+  try {
+    yield put(pending());
+    const token: string = yield select((state) => state.auth.token);
+    const book: BookType = yield call(
+      BookService.addBook,
+      token,
+      action.payload
+    );
+    const books: BookType[] = yield select((state) => state.books.books);
+    yield put(success([...books, book]));
+    yield put(push("/"));
+  } catch (error) {
+    yield put(fail(new Error(error?.response?.data?.error || "UNKNOWN_ERROR")));
+  }
+}
+
 export function* booksSaga() {
   yield takeLatest(`${prefix}/GET_BOOKS`, getBooksSaga); // 중복된 호출 중에는 가장 마지막 것만 가져옴
+  yield takeEvery(`${prefix}/ADD_BOOK`, addBookSaga);
 }
