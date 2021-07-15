@@ -2,7 +2,7 @@
 
 _Fastcampus React+Typescript 강의 내용을 정리해둔 자료입니다._
 
-## React로 나의 책장 만들기
+## React로 나의 책장 만들기([참조](https://github.com/xid-mark/fc-my-books))
 
 ```bash
 npx create-react-app my-books --template typescript
